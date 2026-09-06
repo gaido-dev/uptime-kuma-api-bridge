@@ -1,0 +1,24 @@
+services:
+    uptime-kuma:
+        image: louislam/uptime-kuma:2
+        volumes:
+            - uptime-kuma-data:/app/data
+        ports:
+            - "3001:3001"
+        restart: unless-stopped
+
+    uptime-kuma-api-bridge:
+        build: ./uptime-kuma-api-bridge
+        environment:
+            BRIDGE_AUTH_TOKEN: ${BRIDGE_AUTH_TOKEN}
+            UPTIME_KUMA_URL: http://uptime-kuma:3001
+            UPTIME_KUMA_SERVICE_USERNAME: ${UPTIME_KUMA_SERVICE_USERNAME}
+            UPTIME_KUMA_SERVICE_PASSWORD: ${UPTIME_KUMA_SERVICE_PASSWORD}
+        ports:
+            - "3050:3050"
+        depends_on:
+            - uptime-kuma
+        restart: unless-stopped
+
+volumes:
+    uptime-kuma-data:
